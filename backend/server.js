@@ -13,6 +13,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/recycling_form", require("./routes/recycling_form_routes"));
+app.use("/api/users", require("./routes/userRoutes"));
 
 // // Serve frontend
 // if (process.env.NODE_ENV === 'production') {
