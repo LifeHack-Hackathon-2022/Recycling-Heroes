@@ -1,5 +1,5 @@
 const error_handler = (err, req, res, next) => {
-  const status_code = res.status_code ? res.status_code : 500;
+  const status_code = res.statusCode ? res.statusCode : 500;
 
   res.status(status_code);
 
