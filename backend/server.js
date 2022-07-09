@@ -1,12 +1,12 @@
 const path = require("path");
 const express = require("express");
-// const colors = require("colors");
+const colors = require("colors");
 const dotenv = require("dotenv").config();
 const { error_handler } = require("./middleware/error_middleware");
-// const connectDB = require("./config/db");
+const connectDB = require("./config/db");
 const port = process.env.PORT || 5000;
 
-//connectDB();
+connectDB();
 
 const app = express();
 
@@ -29,4 +29,4 @@ app.use("/api/recycling_form", require("./routes/recycling_form_routes"));
 
 app.use(error_handler);
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(port, () => console.log(`[INFO] Server started on port ${port}`));

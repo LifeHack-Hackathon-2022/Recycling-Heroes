@@ -1,7 +1,8 @@
 const async_handler = require("express-async-handler");
+const Recycling_Form = require('../models/recycling_form')
 
 // @desc            Get a new Recycling Form
-// @http request    GET
+// @request         GET
 // @route           /api/recycling_form
 // @access          Private
 const get_recycling_form = async_handler(async (req, res) => {
@@ -9,31 +10,59 @@ const get_recycling_form = async_handler(async (req, res) => {
 });
 
 // @desc            Submit a new recycling form
-// @http request    POST
+// @request         POST
 // @route           /api/recycling_form
 // @access          Private
 const submit_recycling_form = async_handler(async (req, res) => {
   if (Object.keys(req.body).length === 0) {
     res.status(400);
-    throw new Error("Cannot submit empty form");
+    throw new Error("Cannot submit empty object");
   }
-  res.status(200).json({ message: "Submit Recycling Form" });
+
+  const recycling_form = await Recycling_Form.create({
+    user_id: req.body.user_id,
+    category: req.body.category,
+    description: req.body.description,
+    image: req.body.image
+  })
+
+  res.status(200).json(recycling_form);
 });
 
 // @desc            Update an existing recycling form
-// @http request    PUT
+// @request         PUT
 // @route           /api/recycling_form
 // @access          Private
 const update_recycling_form = async_handler(async (req, res) => {
-  res.status(200).json({ message: `Update Recycling Form ${req.params.id}` });
+  const recycling_form = await Recycling_Form.findById(req.params.id)
+  
+  if (!recycling_form) {
+    res.status(400)
+    throw new Error('Recycling Form not found')
+  }
+
+  const updated_recycling_form = await Recycling_Form.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  })
+  
+  res.status(200).json(updated_recycling_form);
 });
 
 // @desc            Delete an existing recycling form
-// @http request    DELETE
+// @request         DELETE
 // @route           /api/recycling_form
 // @access          Private
 const delete_recycling_form = async_handler(async (req, res) => {
-  res.status(200).json({ message: `Delete Recycling Form ${req.params.id}` });
+  const recycling_form = await Recycling_Form.findById(req.params.id)
+  
+  if (!recycling_form) {
+    res.status(400)
+    throw new Error('Recycling Form not found')
+  }
+
+  await recycling_form.remove()
+
+  res.status(200).json({ id: req.params.id });
 });
 
 // @desc            Get existing recycling forms
@@ -41,7 +70,8 @@ const delete_recycling_form = async_handler(async (req, res) => {
 // @route           /api/recycling_form/submitted_forms
 // @access          Private
 const get_existing_recycling_forms = async_handler(async (req, res) => {
-  res.status(200).json({ message: "Submitted Recycling Forms" });
+  const recycling_forms = await Recycling_Form.find()
+  res.status(200).json(recycling_forms);
 });
 
 module.exports = {
