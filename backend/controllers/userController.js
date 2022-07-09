@@ -51,7 +51,7 @@ const registerUser = asyncHandler(async (request, response) => {
         throw new Error('Invalid user data provided');
     }
 
-    response.json({message: 'Register User'})
+    response.json({message: 'User has been successfully registered'})
 });
 
 // @desc            Login users
@@ -59,7 +59,28 @@ const registerUser = asyncHandler(async (request, response) => {
 // @route           /api/users/login
 // @access          Public
 const loginUser = asyncHandler(async (request, response) => {
-    response.json({message: 'Login User'})
+    const {email, password} = request.body;
+
+    const user = await User.findOne({email});
+
+    if (!user) {
+        response.status(400);
+        throw new Error('Email does not have a registered account')
+    }
+
+    if (await bcrypt.compare(password, user.password)) {
+        response.status(201).json({
+            _id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+        })
+    } else {
+        response.status(400);
+        throw new Error('Invalid password provided');
+    }
+
+    response.json({message: 'User has been successfully logged in'})
 });
 
 // @desc            Get user data
