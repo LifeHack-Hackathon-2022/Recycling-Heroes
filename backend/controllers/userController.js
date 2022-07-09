@@ -44,7 +44,8 @@ const registerUser = asyncHandler(async (request, response) => {
             _id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
+            email: user.email,
+            token: generateJWTToken(user._id)
         })
     } else {
         response.status(400);
@@ -73,7 +74,8 @@ const loginUser = asyncHandler(async (request, response) => {
             _id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
+            email: user.email,
+            token: generateJWTToken(user._id)
         })
     } else {
         response.status(400);
@@ -86,9 +88,13 @@ const loginUser = asyncHandler(async (request, response) => {
 // @desc            Get user data
 // @request         GET
 // @route           /api/users/info
-// @access          Public
+// @access          Private
 const infoUser = asyncHandler(async (request, response) => {
     response.json({message: 'Display User Data'})
 });
+
+const generateJWTToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {expiresIn: '7d'});
+}
 
 module.exports = { registerUser, loginUser, infoUser };
