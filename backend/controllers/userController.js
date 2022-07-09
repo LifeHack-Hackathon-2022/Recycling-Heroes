@@ -1,25 +1,73 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const asyncHandler = require('express-async-handler');
+const User = require('../models/user');
+
 // @desc            Register new users
-// @http request    POST
+// @request         POST
 // @route           /api/users
 // @access          Public
-const registerUser = (request, response) => {
+const registerUser = asyncHandler(async (request, response) => {
+    const { firstName, lastName, email, password } = request.body;
+
+    if (!firstName) {
+        response.status(400);
+        throw new Error('Please fill in first name');
+    }
+    if (!lastName) {
+        response.status(400);
+        throw new Error('Please fill in last name');
+    }
+    if (!email) {
+        response.status(400);
+        throw new Error('Please fill in email');
+    }
+    if (!password) {
+        response.status(400);
+        throw new Error('Please fill in password');
+    }
+    
+    const repeatedEmail = await User.findOne({email});
+
+    if (repeatedEmail) {
+        response.status(400);
+        throw new Error('Email already has a registered account');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashed = await bcrypt.hash(password, salt);
+
+    const user = await User.create({firstName, lastName, email, password: hashed});
+
+    if (user) {
+        response.status(201).json({
+            _id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+        })
+    } else {
+        response.status(400);
+        throw new Error('Invalid user data provided');
+    }
+
     response.json({message: 'Register User'})
-}
+});
 
 // @desc            Login users
-// @http request    POST
+// @request         POST
 // @route           /api/users/login
 // @access          Public
-const loginUser = (request, response) => {
+const loginUser = asyncHandler(async (request, response) => {
     response.json({message: 'Login User'})
-}
+});
 
 // @desc            Get user data
-// @http request    GET
+// @request         GET
 // @route           /api/users/info
 // @access          Public
-const infoUser = (request, response) => {
+const infoUser = asyncHandler(async (request, response) => {
     response.json({message: 'Display User Data'})
-}
+});
 
 module.exports = { registerUser, loginUser, infoUser };
