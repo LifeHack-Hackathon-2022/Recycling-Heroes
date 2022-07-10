@@ -14,9 +14,9 @@ const get_recycling_form = async_handler(async (req, res) => {
 // @route           /api/recycling_form
 // @access          Private
 const submit_recycling_form = async_handler(async (req, res) => {
-  if (Object.keys(req.body).length === 0) {
+  if (!req.body.user_id || !req.body.category || !req.body.description || !req.body.image) {
     res.status(400);
-    throw new Error("Cannot submit empty object");
+    throw new Error("Please fill in all fields!");
   }
 
   const recycling_form = await Recycling_Form.create({
