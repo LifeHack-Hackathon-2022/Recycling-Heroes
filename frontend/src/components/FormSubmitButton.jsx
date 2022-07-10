@@ -1,8 +1,4 @@
-function FormSubmitButton() {
-
-  const onSubmit = (e) => {
-    e.preventDefault()
-  }
+function FormSubmitButton({onSubmit}) {
 
   return (
     <form onSubmit={onSubmit}>
