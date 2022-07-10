@@ -90,6 +90,15 @@ const loginUser = asyncHandler(async (request, response) => {
 // @route           /api/users/info
 // @access          Private
 const infoUser = asyncHandler(async (request, response) => {
+    const { _id, firstName, lastName, email } = await User.findById(request.user.id);
+
+    response.status(200).json({
+        id: _id,
+        firstName: firstName,
+        lastName: lastName,
+        email: email
+    })
+
     response.json({message: 'Display User Data'})
 });
 
